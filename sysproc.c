@@ -10,6 +10,27 @@
 int callCount = 0; // Initialize syscall counter
 int callToFollow = 5; // Default syscall, read, to count
 
+// Return how many times a tracked syscall
+// has been called
+int
+sys_getreadcount(void)
+{
+  int reset, follow;
+  argint(0, &follow);
+  argint(1, &reset);
+
+  if(reset == 1) {
+    // Reset counter if argument given
+    callCount = 0;
+  }
+  if(follow > 0 && follow != callToFollow) {
+    // Change currently tracked syscall and reset counter
+    callToFollow = follow;
+    callCount = 0;
+  }
+  return callCount;
+}
+
 int
 sys_fork(void)
 {
@@ -43,27 +64,6 @@ int
 sys_getpid(void)
 {
   return myproc()->pid;
-}
-
-// Return how many times a tracked syscall
-// has been called
-int
-sys_getreadcount(void)
-{
-  int reset, follow;
-  argint(0, &follow);
-  argint(1, &reset);
-
-  if(reset == 1) {
-    // Reset counter if argument given
-    callCount = 0;
-  }
-  if(follow > 0 && follow != callToFollow) {
-    // Change currently tracked syscall and reset counter
-    callToFollow = follow;
-    callCount = 0;
-  }
-  return callCount;
 }
 
 int
